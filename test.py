@@ -1,12 +1,12 @@
 import pandas as pd
-import misvm
+# import misvm
 import numpy as np
 import pickle
 import os
 import gc
-from tpot import TPOTClassifier
-from rdkit import Chem
-from rdkit.Chem import MACCSkeys
+# from tpot import TPOTClassifier
+# from rdkit import Chem
+# from rdkit.Chem import MACCSkeys
 from sklearn.impute import SimpleImputer
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import train_test_split
