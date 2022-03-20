@@ -1,0 +1,1 @@
+conda env export --name publication > publication.yml
