@@ -14,22 +14,19 @@ except:
 from modelling_functions import *
 
 
-dask = False
-## Selecting encoding method, can be changed to RDKF if desired
+training_data, test_data = train_test_split(pd.read_pickle("encoded_data.pk1"), test_size=0.2, stratify=pd.read_pickle("encoded_data.pk1")["Ames"], random_state=34783)
+training_data = training_data.reset_index(drop=True);   test_data = test_data.reset_index(drop=True)
+
 encoding = "MACCS"
-
-##          Step 1: splitting data into a hold out validation dataset
-training_data, validation_data = train_test_split(pd.read_pickle("encoded_data.pk1"), test_size=0.2, stratify=pd.read_pickle("encoded_data.pk1")["Ames"], random_state=34783)
-training_data = training_data.reset_index(drop=True);   validation_data = validation_data.reset_index(drop=True)
-
-##          Step 2: Repeated stratified crossvalidation on training data
-rskf = RepeatedStratifiedKFold(n_splits=10, n_repeats=10, random_state=6234794)
-for fold,[train_index, test_index] in enumerate(rskf.split(training_data, training_data["Ames"])):
-    train   =   training_data.iloc[train_index]
-    test    =   training_data.iloc[test_index]
-    develop_models(training_data=train,testing_data=test,encoding = encoding,suffix={"fold":fold%10,"iteration":fold//10},save_model=False,dask=dask)
-    print("Done Fold", "    fold:",fold%10,"    iteration:",fold//10)
-
-# ##          Step 3: model building on training data against holdout validation data
-# develop_models(training_data=train,testing_data=test,encoding = encoding,suffix={"fold":"","iteration":"validation"},save_model=True)
-print("DONE")
+##      Building model, note encoding already performed
+instances = np.array(training_data[encoding].to_list())
+labels = training_data["Ames"].to_list()    
+tpot_optimisation = TPOTClassifier(generations=10, population_size=500, cv=5, verbosity=2, n_jobs=-1)                                                       
+tpot_optimisation.fit(instances,labels)    
+##      Testing model
+model = tpot_optimisation.fitted_pipeline_  ## This takes the best fitted pipeline developed
+instances = np.array(test_data[encoding].to_list())
+true_labels = test_data["Ames"].to_list()       
+predictions = model.predict(instances) 
+predicted_probabilities = model.predict_proba(instances)                                  
+predicted_labels = list(map(pos_or_neg,predictions))   
