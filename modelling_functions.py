@@ -51,10 +51,13 @@ def build_test_ml_model(training_data,testing_data,encoding,ML,suffix,save_model
         instances = np.array(testing_data[encoding].to_list())
         true_labels = testing_data["Ames"].to_list()       
         predictions = model.predict(instances) 
-        predicted_probabilities = model.predict_proba(instances)                                  
+        try:
+            predicted_probabilities = model.predict_proba(instances)      
+        except:
+            predicted_probabilities = predictions
         predicted_labels = list(map(pos_or_neg,predictions))                            
         df = pd.DataFrame({
-            'predicted' : predicted_probabilities,
+            'predicted' : [i[1] for i in predicted_probabilities],
             'predicted labal' : predicted_labels,
             'true label' : true_labels
         })   
