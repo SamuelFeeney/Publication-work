@@ -3,13 +3,17 @@ import numpy as np
 import pickle
 import os
 from tpot import TPOTClassifier
+
+import sklearn
+print (sklearn.__version__)
 from sklearn.model_selection import RepeatedStratifiedKFold
 from sklearn.model_selection import train_test_split
-try:
-    import misvm 
-except:
-    print("please use command to install MIL modelling package \n pip install -e git+https://github.com/garydoranjr/misvm.git#egg=misvm")
-    quit()
+import misvm
+# try:
+#     import misvm 
+# except:
+#     print("please use command to install MIL modelling package \n pip install -e git+https://github.com/garydoranjr/misvm.git#egg=misvm")
+#     quit()
 
 from modelling_functions import *
 
